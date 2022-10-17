@@ -10,6 +10,7 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tv_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="26dp"
@@ -20,7 +21,9 @@
    <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
+
        <Button
+           android:id="@+id/btn_delete"
            android:layout_width="120dp"
            android:layout_height="60dp"
            android:layout_alignParentRight="true"
@@ -39,7 +42,7 @@
         android:id="@+id/img_View"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@color/purple_200" />
+         />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -50,15 +53,18 @@
         >
 
         <Button
+            android:id="@+id/btn_previous"
             android:layout_width="120dp"
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:text="Previous"/>
+
         <Button
+            android:id="@+id/btn_forward"
             android:layout_width="120dp"
             android:layout_height="60dp"
             android:layout_alignParentRight="true"
-            android:text="Next"/>
+            android:text="Forward"/>
 
     </RelativeLayout>
 
@@ -79,6 +85,7 @@
             android:text="Add"/>
 
         <EditText
+            android:id="@+id/edt_url"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
