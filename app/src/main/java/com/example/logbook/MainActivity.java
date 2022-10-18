@@ -80,35 +80,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //firstOpen();
-
         loadData();
     }
 
-
-    private void firstOpen(){
-
-        databaseHelper.deleteAllImages();
-        databaseHelper.deleteCurrent();
-
-        Long image1 = databaseHelper.insertImage( "https://a1.espncdn.com/combiner/i?img=%2Fi%2Fleaguelogos%2Fsoccer%2F500%2F23.png",
-                "",
-                "",
-                "");
-
-        Long image2 = databaseHelper.insertImage( "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=",
-                "",
-                "",
-                "");
-
-
-        Long image3 = databaseHelper.insertImage( "https://www.w3schools.com/w3css/img_lights.jpg",
-                "",
-                "",
-                "");
-
-        databaseHelper.insertCurrentImage(0);
-    }
 
     private void loadData(){
         images = databaseHelper.getImages();

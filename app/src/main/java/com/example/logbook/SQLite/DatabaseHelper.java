@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase database;
 
     private static final String DATABASE_NAME = "test";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String TABLE_IMAGES = "images";
     private static final String IMAGE_ID = "image_id";
@@ -57,8 +57,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_IMAGES);
         sqLiteDatabase.execSQL(CREATE_TABLE_CURRENT);
 
+        insertImageOnCreate(sqLiteDatabase, "https://a1.espncdn.com/combiner/i?img=%2Fi%2Fleaguelogos%2Fsoccer%2F500%2F23.png", "", "", "");
+        insertImageOnCreate(sqLiteDatabase, "https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=", "", "", "");
+        insertImageOnCreate(sqLiteDatabase, "https://www.w3schools.com/w3css/img_lights.jpg", "", "", "");
+
+        insertCurrentImageOnCreate(sqLiteDatabase);
+
+    }
+
+    public long insertImageOnCreate(SQLiteDatabase sqLiteDatabase, String url, String bitmap, String path,  String location){
+        ContentValues rowValues = new ContentValues();
+
+        rowValues.put(IMAGE_URL, url);
+        rowValues.put(IMAGE_PATH, bitmap);
+        rowValues.put(IMAGE_BITMAP, path);
+        rowValues.put(IMAGE_LOCATION, location);
+
+        return sqLiteDatabase.insertOrThrow(TABLE_IMAGES, null, rowValues);
+    }
+
+    public long insertCurrentImageOnCreate(SQLiteDatabase sqLiteDatabase){
+        ContentValues rowValues = new ContentValues();
+
+        rowValues.put(CURRENT_ID, 0);
 
 
+        return sqLiteDatabase.insertOrThrow(TABLE_CURRENT, null, rowValues);
     }
 
     @Override

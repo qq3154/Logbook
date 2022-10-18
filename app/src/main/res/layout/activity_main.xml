@@ -20,7 +20,8 @@
 
    <RelativeLayout
        android:layout_width="match_parent"
-       android:layout_height="wrap_content">
+       android:layout_height="wrap_content"
+       android:visibility="gone">
 
        <Button
            android:id="@+id/btn_delete"
@@ -92,6 +93,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             android:layout_toStartOf="@+id/btn_add"
+            android:maxLines="1"
             android:hint="Enter url here" />
 
 
