@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.logbook.Model.MyImage;
 import com.example.logbook.SQLite.DatabaseHelper;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.util.List;
@@ -95,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadImage(String url){
-        new LoadImageTask(imgView)
-                .execute(url);
+
+        //new LoadImageTask(imgView).execute(url);
+
+        //load with Picasso
+        Picasso.with(this).load(url).into(imgView);
 
         int currentPos = currentImage + 1;
         String currentImageStr = String.format("%s" +"/"+ "%s", currentPos, maxImage);
