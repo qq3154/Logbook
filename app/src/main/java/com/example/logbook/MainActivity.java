@@ -1,12 +1,16 @@
 package com.example.logbook;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -15,11 +19,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.logbook.Model.MyImage;
 import com.example.logbook.SQLite.DatabaseHelper;
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
     private Button btnPrevious;
     private Button btnForward;
     private Button btnAdd;
-    private  Button btnDelete;
     private EditText edtUrl;
+    private Button btnLaunchCamera;
 
     List<MyImage> images;
     int currentImage;
     int maxImage;
+
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         btnForward = findViewById(R.id.btn_forward);
         btnAdd = findViewById(R.id.btn_add);
         edtUrl = findViewById(R.id.edt_url);
-        btnDelete = findViewById(R.id.btn_delete);
+        btnLaunchCamera = findViewById(R.id.btn_launch_camera);
 
         btnPrevious.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,14 +86,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnDelete.setOnClickListener(new View.OnClickListener() {
+        btnLaunchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteImage();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                    }
+                    else
+                    {
+                        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        activityResultLauncher.launch(intent);
+                    }
+                }
             }
         });
 
         loadData();
+    }
+
+
+
+    private void onTakePicture(Bitmap photo){
+        //convert photo bitmap to bytes array
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG,100, stream);
+        byte [] b = stream.toByteArray();
+
+        //convert bytes array to string
+        String stringConverted = Base64.encodeToString(b, Base64.DEFAULT);
+
+        //add to database
+        databaseHelper.insertImage("", stringConverted, "", "");
+        int imageCount = databaseHelper.getImages().size();
+        databaseHelper.updateCurrentImage(imageCount-1);
+
+        Toast.makeText( this, "Add photo successful!", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -91,13 +132,29 @@ public class MainActivity extends AppCompatActivity {
         currentImage = databaseHelper.getCurrentImage();
 
         if(currentImage < maxImage){
-            loadImage(images.get(currentImage).getUrl());
+            if(images.get(currentImage).getUrl().equals("")){
+                String stringConverted = images.get(currentImage).getBitmap();
+                String uri = convertToUri(this, stringConverted);
+                loadImage(uri);
+            }
+            else{
+                loadImage(images.get(currentImage).getUrl());
+            }
         }
     }
 
-    private void loadImage(String url){
+    public String convertToUri(Context inContext, String stringInDataBase) {
 
-        //new LoadImageTask(imgView).execute(url);
+        byte [] encodeByte = Base64.decode(stringInDataBase,Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String uri = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), bitmap, "", null);
+        return uri;
+    }
+
+    private void loadImage(String url){
 
         //load with Picasso
         Picasso.with(this).load(url).into(imgView);
@@ -137,36 +194,22 @@ public class MainActivity extends AppCompatActivity {
         edtUrl.setText("");
     }
 
-    private void deleteImage(){
-        //databaseHelper.deleteImage(images.get(currentImage));
+    ActivityResultLauncher<Intent> activityResultLauncher = (ActivityResultLauncher<Intent>) registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
 
-    }
+                        Intent data = result.getData();
+                        Bitmap photo = (Bitmap) data.getExtras().get("data");
+                        onTakePicture(photo);
+                        loadData();
+                    }
 
-    private class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-
-        public LoadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... url) {
-            String imageUrl = url[0];
-            Bitmap imageBitmap = null;
-            try {
-                InputStream in = new java.net.URL(imageUrl).openStream();
-                imageBitmap = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
+                }
             }
-            return imageBitmap;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
+    );
 
 }
 

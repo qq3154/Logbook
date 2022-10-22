@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase database;
 
     private static final String DATABASE_NAME = "test";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String TABLE_IMAGES = "images";
     private static final String IMAGE_ID = "image_id";
