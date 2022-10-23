@@ -65,9 +65,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public long insertImageOnCreate(SQLiteDatabase sqLiteDatabase, String url, String bitmap, String path,  String location){
+    private long insertImageOnCreate(SQLiteDatabase sqLiteDatabase, String url, String bitmap, String path,  String location){
         ContentValues rowValues = new ContentValues();
-
         rowValues.put(IMAGE_URL, url);
         rowValues.put(IMAGE_PATH, bitmap);
         rowValues.put(IMAGE_BITMAP, path);
@@ -76,11 +75,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insertOrThrow(TABLE_IMAGES, null, rowValues);
     }
 
-    public long insertCurrentImageOnCreate(SQLiteDatabase sqLiteDatabase){
+    private long insertCurrentImageOnCreate(SQLiteDatabase sqLiteDatabase){
         ContentValues rowValues = new ContentValues();
-
         rowValues.put(CURRENT_ID, 0);
-
 
         return sqLiteDatabase.insertOrThrow(TABLE_CURRENT, null, rowValues);
     }
@@ -148,7 +145,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.execSQL(DATABASE_DELETE_ALL);
     }
 
-
     public int getCurrentImage(){
         int currentImage = 0;
 
@@ -160,7 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         results.moveToFirst();
         while(!results.isAfterLast()){
             currentImage = results.getInt(0);
-
 
             results.moveToNext();
         }
