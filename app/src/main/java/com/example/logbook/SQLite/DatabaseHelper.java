@@ -48,7 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         database = getWritableDatabase();
-
     }
 
     @Override
@@ -145,7 +144,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.execSQL(DATABASE_DELETE_ALL);
     }
 
-
     public int getCurrentImage(){
         int currentImage = 0;
 
@@ -157,8 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         results.moveToFirst();
         while(!results.isAfterLast()){
             currentImage = results.getInt(0);
-
-
             results.moveToNext();
         }
         return currentImage;
@@ -166,15 +162,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public long insertCurrentImage(int pos){
         ContentValues rowValues = new ContentValues();
-
         rowValues.put(CURRENT_ID, pos);
-
-
         return database.insertOrThrow(TABLE_CURRENT, null, rowValues);
     }
 
     public void updateCurrentImage(int pos){
-
         String DATABASE_UPDATE = String.format("UPDATE %s SET %s = '%s'",
                 TABLE_CURRENT,
                 CURRENT_ID, pos);

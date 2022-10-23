@@ -103,23 +103,6 @@ public class MainActivity extends AppCompatActivity {
         loadData();
     }
 
-    private void onTakePicture(Bitmap photo){
-
-        //get local time to set unique name for the photo
-        LocalDateTime now = LocalDateTime.now();
-
-        //convert bitmap to uri
-        String uri = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, now.toString(), null);
-
-        //add to database
-        databaseHelper.insertImage("", "", uri, "");
-        int imageCount = databaseHelper.getImages().size();
-        databaseHelper.updateCurrentImage(imageCount-1);
-
-        Toast.makeText( this, "Add photo successful!", Toast.LENGTH_SHORT).show();
-    }
-
-
     private void loadData(){
         images = databaseHelper.getImages();
         maxImage = images.size();
@@ -173,6 +156,22 @@ public class MainActivity extends AppCompatActivity {
         loadData();
 
         edtUrl.setText("");
+    }
+
+    private void onTakePicture(Bitmap photo){
+
+        //get local time to set unique name for the photo
+        LocalDateTime now = LocalDateTime.now();
+
+        //convert bitmap to uri
+        String uri = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, now.toString(), null);
+
+        //add to database
+        databaseHelper.insertImage("", "", uri, "");
+        int imageCount = databaseHelper.getImages().size();
+        databaseHelper.updateCurrentImage(imageCount-1);
+
+        Toast.makeText( this, "Add photo successful!", Toast.LENGTH_SHORT).show();
     }
 
     ActivityResultLauncher<Intent> activityResultLauncher = (ActivityResultLauncher<Intent>) registerForActivityResult(
