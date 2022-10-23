@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SQLiteDatabase database;
 
     private static final String DATABASE_NAME = "test";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
 
     private static final String TABLE_IMAGES = "images";
     private static final String IMAGE_ID = "image_id";
@@ -65,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public long insertImageOnCreate(SQLiteDatabase sqLiteDatabase, String url, String bitmap, String path,  String location){
+    private long insertImageOnCreate(SQLiteDatabase sqLiteDatabase, String url, String bitmap, String path,  String location){
         ContentValues rowValues = new ContentValues();
 
         rowValues.put(IMAGE_URL, url);
@@ -76,12 +76,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return sqLiteDatabase.insertOrThrow(TABLE_IMAGES, null, rowValues);
     }
 
-    public long insertCurrentImageOnCreate(SQLiteDatabase sqLiteDatabase){
+    private long insertCurrentImageOnCreate(SQLiteDatabase sqLiteDatabase){
         ContentValues rowValues = new ContentValues();
-
         rowValues.put(CURRENT_ID, 0);
-
-
         return sqLiteDatabase.insertOrThrow(TABLE_CURRENT, null, rowValues);
     }
 

@@ -2,15 +2,12 @@ package com.example.logbook;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -29,7 +26,7 @@ import com.example.logbook.Model.MyImage;
 import com.example.logbook.SQLite.DatabaseHelper;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,19 +103,16 @@ public class MainActivity extends AppCompatActivity {
         loadData();
     }
 
-
-
     private void onTakePicture(Bitmap photo){
-        //convert photo bitmap to bytes array
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        photo.compress(Bitmap.CompressFormat.PNG,100, stream);
-        byte [] b = stream.toByteArray();
 
-        //convert bytes array to string
-        String stringConverted = Base64.encodeToString(b, Base64.DEFAULT);
+        //get local time to set unique name for the photo
+        LocalDateTime now = LocalDateTime.now();
+
+        //convert bitmap to uri
+        String uri = MediaStore.Images.Media.insertImage(this.getContentResolver(), photo, now.toString(), null);
 
         //add to database
-        databaseHelper.insertImage("", stringConverted, "", "");
+        databaseHelper.insertImage("", "", uri, "");
         int imageCount = databaseHelper.getImages().size();
         databaseHelper.updateCurrentImage(imageCount-1);
 
@@ -133,8 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(currentImage < maxImage){
             if(images.get(currentImage).getUrl().equals("")){
-                String stringConverted = images.get(currentImage).getBitmap();
-                String uri = convertToUri(this, stringConverted);
+                String uri = images.get(currentImage).getPath();
                 loadImage(uri);
             }
             else{
@@ -143,19 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String convertToUri(Context inContext, String stringInDataBase) {
-
-        byte [] encodeByte = Base64.decode(stringInDataBase,Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String uri = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), bitmap, "", null);
-        return uri;
-    }
-
     private void loadImage(String url){
-
         //load with Picasso
         Picasso.with(this).load(url).into(imgView);
 
@@ -206,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                         onTakePicture(photo);
                         loadData();
                     }
-
                 }
             }
     );
