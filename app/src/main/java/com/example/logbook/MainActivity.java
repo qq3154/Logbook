@@ -55,11 +55,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void insertImage(){
         imageUrls = new ArrayList<>();
-        currentImage = 0;
-        maxImage = 3;
+
         imageUrls.add("https://a1.espncdn.com/combiner/i?img=%2Fi%2Fleaguelogos%2Fsoccer%2F500%2F23.png");
         imageUrls.add("https://media.istockphoto.com/photos/wild-grass-in-the-mountains-at-sunset-picture-id1322277517?k=20&m=1322277517&s=612x612&w=0&h=ZdxT3aGDGLsOAn3mILBS6FD7ARonKRHe_EKKa-V-Hws=");
         imageUrls.add("https://www.w3schools.com/w3css/img_lights.jpg");
+
+        currentImage = 0;
+        maxImage = imageUrls.size();
     }
 
 
