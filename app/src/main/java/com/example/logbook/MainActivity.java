@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         //we can add image here
         imageUrls.add(url);
 
+        Toast.makeText(this, "Add image successfully!", Toast.LENGTH_SHORT).show();
+
         currentImage = maxImage;
 
         loadData();
